@@ -1,0 +1,18 @@
+@charset "UTF-8";
+
+
+.icon-info:before { content: '\2139'; } /* 'ℹ' */
+.icon-cog:before { content: '\2699'; } /* '⚙' */
+.icon-cancel:before { content: '\2715'; } /* '✕' */
+.icon-cw:before { content: '\27f3'; } /* '⟳' */
+.icon-play-circle2:before { content: '\e761'; } /* '' */
+.icon-spin1:before { content: '\e830'; } /* '' */
+.icon-spin2:before { content: '\e831'; } /* '' */
+.icon-spin3:before { content: '\e832'; } /* '' */
+.icon-spin4:before { content: '\e834'; } /* '' */
+.icon-spin5:before { content: '\e838'; } /* '' */
+.icon-headphones:before { content: '🎧'; } /* '\1f3a7' */
+.icon-trophy:before { content: '🏆'; } /* '\1f3c6' */
+.icon-award:before { content: '🏉'; } /* '\1f3c9' */
+.icon-user:before { content: '👤'; } /* '\1f464' */
+.icon-users:before { content: '👥'; } /* '\1f465' */
