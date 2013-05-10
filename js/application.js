@@ -7,7 +7,7 @@
  */
 
  var settings = {
-                 	 instagram_token: '271434636.1a79b15.9cab33e1a24547d3ae9623253881652c' //access_token
+                     instagram_token: '271434636.1a79b15.9cab33e1a24547d3ae9623253881652c' //access_token
                    , sc_token:  '0832d7b6bacfb836dafac90b0365b3f6' //client_id:
                    , count : 100
                    , default_tag : 'Sankeien'
@@ -19,16 +19,61 @@
 
  $(document).ready(function() {
 
-     preload();
-     intro();
-     SC.initialize({ client_id: settings.sc_token });
-     playSomeMusic();
+    preload();
+    intro();
+    SC.initialize({ client_id: settings.sc_token });
+    playSomeMusic();
    
+
+    document.onclick = function(e) {
+
+      //IE doesn't pass in the event object
+      event = event || window.event;
+    
+      //IE uses srcElement as the target
+      var target = event.target || event.srcElement;
+
+      if(target.id) {
+
+        switch(target.id) {
+
+          case "m1":
+            mode = "single-player"
+            break;
+          case "m2":
+            mode = "two-player";
+            break;
+          }
+        
+      } else {
+
+        switch(target.className) {
+
+          case "icon-play-circle2":
+            reload();
+            break;
+
+          case "icon-cancel close":
+            
+            $(target).parent().fadeOut(function() {
+              $('#overlay').fadeOut();
+             });
+            break;
+
+        }
+
+      }
+
+           //hide tabs if still visible
+           $('.active').hide().removeClass('active');
+       
+     };
 
      var $tabs = $('.flyout');
          $tabs.hide();
 
-     $('nav i').click(function(e){
+     //events for navigation icons and respective tabs then open
+     $('nav').on('click','i',function(e) {
         //0 1 2
         var index = $(this).parent().index()
           , $tab = $($tabs[index]);
@@ -44,80 +89,70 @@
 
         e.stopPropagation();
 
-     })
+     });
 
-     $('body').click(function(){
-       $('.active').hide().removeClass('active');
-     })
 
-     //stop click propagation on tabs
-     $('.flyout').click(function(e){
-       e.stopPropagation();
+     //events for tabs
+     $('.flyout').click(function(e) {
+
+        event = event || window.event;
+    
+        var target = event.target || event.srcElement;
+
+        if(target.id) {
+
+          switch(target.id) {
+            case "mode-1":
+              game.set_single_player();
+              break;
+            case "mode-2":
+              game.set_two_player();
+              break;
+
+          }
+
+        } else {
+
+          switch(target.className) {
+
+          //restart
+          case "icon-cw":
+            reload();
+            break;
+          }
+       }
+
+        e.stopPropagation();
      });
 
      //color picker for cards
-     $('#color_settings li').click(function(){
+     $('#color_settings').on('click','li',function() {
        game.set_card_background($(this).attr("class"));
-     })
-
-     //restart
-     $('.icon-cw').click(function(){
-        reload();
-     })
-
-     $(document).on("click",".icon-play-circle2",function(){
-        reload();
-     })
-
-     $(document).on("click",".close",function(){
-
-       $(this).parent().fadeOut(function(){
-         $('#overlay').fadeOut()
-       });
-       
      });
 
-     //game mode 
-     $('#mode-1').click(function(){
-       game.set_single_player();
-     });
-
-     $('#mode-2').click(function(){
-       game.set_two_player();
-     })
-
-     $(document).on("click","#m1",function(){
-
-        mode = "single-player";
-       
-     });
-
-     $(document).on("click","#m2",function(){
-
-        mode = "two-player";
-       
-     });
-
-     $('#m1').click();//set default setting to single-player
+    
+     //set default setting to single-player
+     $('#m1').click();
 
 
  });
+ 
+  function reload() {
+    $('#overlay').fadeOut(load_images);
+  }
 
- function reload() {
-    $('#overlay').fadeOut(function(){
-       load_images(settings.default_tag,settings.count);
-    });
- }
+  function query(callback) {
+    var instagram_url = 'https://api.instagram.com/v1/tags/' + settings.default_tag + '/media/recent?callback=?&count='+ settings.count;
+    $.getJSON(instagram_url, { access_token:settings.instagram_token }, callback);
+  }
 
- function load_images(tag,count) {
+  function load_images() {
 
-     $('#loader').show();
+    $('#loader').show();
 
-      var instagram_url = 'https://api.instagram.com/v1/tags/' + tag + '/media/recent?callback=?&count='+ count;
+    query(function(instagram) {
 
-      $.getJSON(instagram_url, { access_token:settings.instagram_token }, function(instagram) {
-
-          if(instagram.meta.code == 200) {
+          if(instagram.meta.code === 200) {
 
               var img_arr = []
                 , photos = instagram.data;
@@ -151,11 +186,36 @@
 
  }
 
- function playSomeMusic() { 
+  function preload() {
+     
+     query(function(instagram) {
+
+          if(instagram.meta.code === 200) {
+
+              var photos = instagram.data;
+
+              for(var key in photos) {
+
+                  var photo = photos[key];
+
+                  $('<img/>')[0].src = photo.images.thumbnail.url;
+
+              }
+
+          } else {
+              throw("Error" + instagram.meta.code);
+          }
+
+      });
+
+
+  }
+
+  function playSomeMusic() { 
       //SC.get('/users/2772749/tracks', //olafur arnalds
 
-          SC.oEmbed("https://soundcloud.com/olafur-arnalds", {maxheight: 395 , auto_play: true, color: "01a2ff"}, //ff0066
-            document.getElementById("music"));
+      SC.oEmbed("https://soundcloud.com/olafur-arnalds", {maxheight: 395 , auto_play: true, color: "01a2ff"}, //ff0066
+       document.getElementById("music"));
   }
 
   function intro() {
@@ -219,27 +279,4 @@
      );
   }
 
-  function preload() {
-     var instagram_url = 'https://api.instagram.com/v1/tags/' + settings.default_tag + '/media/recent?callback=?&count='+ settings.count;
-     $.getJSON(instagram_url, { access_token:settings.instagram_token }, function(instagram) {
 
-          if(instagram.meta.code == 200) {
-
-              var photos = instagram.data;
-
-              for(var key in photos) {
-
-                  var photo = photos[key];
-
-                  $('<img/>')[0].src = photo.images.thumbnail.url;
-
-              }
-
-          } else {
-              throw("Error" + instagram.meta.code);
-          }
-
-      });
-
-
- }
