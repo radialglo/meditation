@@ -8,4 +8,6 @@ Match pairs of [Instagram](http://instagram.com/)  photos of the Japanese garden
 
 Created Winter 2012 by [Anthony Su](https://github.com/radialglo) for the [Coding for Good](http://cfg.good.is/) Challenge.
 
+[Play the game](http://radialglo.github.io/meditation/)
+
 ![Meditation](https://raw.github.com/radialglo/meditation/master/snapshots/Meditation-2.png)
