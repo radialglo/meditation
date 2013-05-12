@@ -28,10 +28,10 @@
     document.onclick = function(e) {
 
       //IE doesn't pass in the event object
-      event = event || window.event;
+      e = e || window.event;
     
       //IE uses srcElement as the target
-      var target = event.target || event.srcElement;
+      var target = e.target || e.srcElement;
 
       if(target.id) {
 
@@ -74,6 +74,7 @@
 
      //events for navigation icons and respective tabs then open
      $('nav').on('click','i',function(e) {
+
         //0 1 2
         var index = $(this).parent().index()
           , $tab = $($tabs[index]);
@@ -95,18 +96,18 @@
      //events for tabs
      $('.flyout').click(function(e) {
 
-        event = event || window.event;
+        e = e || window.event;
     
-        var target = event.target || event.srcElement;
+        var target = e.target || e.srcElement;
 
         if(target.id) {
 
           switch(target.id) {
             case "mode-1":
-              game.set_single_player();
+              game.settings.set_single_player();
               break;
             case "mode-2":
-              game.set_two_player();
+              game.settings.set_two_player();
               break;
 
           }
@@ -127,7 +128,7 @@
 
      //color picker for cards
      $('#color_settings').on('click','li',function() {
-       game.set_card_background($(this).attr("class"));
+       game.settings.set_card_background($(this).attr("class"));
      });
 
     
@@ -168,7 +169,7 @@
 
               if(game == undefined) {
 
-                game = new meditation('board',mode,img_arr);
+                game = new Meditation('board',mode,img_arr);
 
               } else {
 
@@ -278,5 +279,4 @@
     + '</div>'
      );
   }
-
 

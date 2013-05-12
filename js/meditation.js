@@ -6,52 +6,74 @@
  * Play Meditation by matching pictures!
  */
 
- function meditation(board_id,mode,images) {
-  this.$board = $('#' + board_id);
-  (mode === "single-player")? this.set_single_player() : this.set_two_player();
-  this.setImages(images);
-  this.generateBoard();
- }
+  function Meditation(board_id, mode, images) {
 
- meditation.prototype = {
-    min_cnt : 14//pairs
-  , flip_count : 0
-  , new_board : true
-  , wait_time : 1000
-  , mode : "single-player"
-  , get_mode : function() {
-    return this.mode;
+    this.$board = $('#' + board_id);
+
+     if (mode === "single-player")  {
+      $('#mode-1').attr("checked",true);
+    } else {
+       $('#mode-2').attr("checked",true);
+    }
+
+    //settings specific to this instance
+    this.settings =  (function() {
+
+      //default background
+      var card_background = "carbon_fibre";
+
+      return {
+
+        //mode
+          set_single_player : function() {
+          mode = "single-player";
+        }
+        , is_single_player : function() {
+          return mode ===  "single-player";
+        }
+        , set_two_player : function() {
+          mode = "two-player";
+        }
+        , is_two_player : function() {
+          return mode === "two-player";
+        }
+       
+        //board background
+        , get_card_background : function() {
+          return card_background;
+        }
+        , set_card_background : function(bg) {
+          $('.front').removeClass(this.get_card_background()).addClass(bg);
+          card_background = bg;
+        } 
+
+      };
+
+    }());
+
+    this.new_board = true;
+    this.started = false;
+    this.setImages(images);
+    this.generateBoard();
+
+
   }
-  , set_single_player : function() {
-    $('#mode-1').attr("checked",true);
-    this.mode = "single-player";
-  }
-  , set_two_player : function() {
-    $('#mode-2').attr("checked",true);
-    this.mode = "two-player";
-  }
-  , card_one : ""
+
+  Meditation.prototype = {
+
+    min_count : 14 //pairs
+  , wait_time : 1000 //ms
   , set_card_one : function(val) {
     this.card_one = val;
   }
-  , card_two : ""
   , set_card_two : function(val) {
     this.card_two = val;
   }
   , cardsEqual : function() {
      return this.card_one === this.card_two;
   }
-  , card_bg : "carbon_fibre"
-  , get_card_background : function() {
-    return this.card_bg;
-  }
-  , set_card_background : function(bg) {
-
-    var self = this;
-
-    $('.front').removeClass(self.get_card_background()).addClass(bg);
-    self.card_bg = bg;
-  } 
+  // flip count indicates if we have have flipped two cards
+  // and is used to trigger card checking
   , get_flip_count : function() { //[0-2]
     return this.flip_count;
   }
@@ -63,7 +85,7 @@
   }
   , reset_flips : function() {
 
-     setTimeout((function(game){
+     setTimeout((function(game) {
 
         return function() {
           
@@ -74,7 +96,7 @@
      })(this),this.wait_time);
 
   }
-  , pair_count : 0 //indicates number of correct pairs
+  //pair_count indicates number of correct pairs
   , increment_pair_count : function() {
     this.pair_count++;
   }
@@ -82,18 +104,20 @@
     this.pair_count = 0;
   } 
   , gameOver : function() {
-    return this.pair_count == this.min_cnt;
+    return this.pair_count == this.min_count;
   }
-
- 	, setImages : function(arr) {
-   /*
+   /* 
+    * setImages
+    * 
     * @param arr - array of images
     * Because meditation is implemented here on a 7 * 4 board, 14 images should be provided
     */
+  , setImages : function(arr) {
 
-    if(arr.length >= this.min_cnt) {
 
- 		  arr = shuffle(arr).slice(0, this.min_cnt);
+    if(arr.length >= this.min_count) {
+
+      arr = shuffle(arr).slice(0, this.min_count);
 
       arr.forEach(function(url){
         arr.push(url);
@@ -102,14 +126,14 @@
       this.image_list = shuffle(arr);
 
     } else {
-      throw("There must be a minimum of " + this.min_cnt + " images provided.");
+      throw("There must be a minimum of " + this.min_count + " images provided.");
     }
  	
   }
 
   , getImages : function() {
- 		 return this.image_list;
- 	}
+    return this.image_list;
+  }
 
   , get_board: function() {
     return this.$board;
@@ -117,178 +141,151 @@
 
   , generateBoard : function() {
 
-     var $board = this.get_board()
-       , photos = this.getImages()
-       , game = this;
+    var $board = this.get_board()
+      , photos = this.getImages();
 
-     if(this.new_board) {
+    this.reset_pair_count();
+    this.reset_flip_count();
 
-         for(var i = 0; i < photos.length; i++) {
+    if(this.new_board) {
 
-         (function(src,index) {
+      var $fragment =  $(document.createDocumentFragment());
 
-             $board.append(
+      for(var i = 0; i < photos.length; i++) {
 
-                    $('<div/>').addClass('holder').append(
+           $fragment.append(
+                   $('<div/>').addClass('holder').append(
                       $('<div/>').addClass('card').append(
                           $('<div/>').addClass('front face')
-                        , $('<img/>').attr({'src' : src}).addClass('back face')
+                        , $('<img/>').attr({'src' : photos[i]}).addClass('back face')
                       )
-                    ).click(function(){ 
-                      game.card_handler(this,src,index); 
-
-                    })//end click
+                    )
+                   .data('index', i)
               );
-           })(photos[i],i)
 
         }//end for loop
 
-        $('.front').addClass(game.get_card_background());
+        $board.append($fragment);
+
+        this.attach_card_handler();
+        this.settings.set_card_background(this.settings.get_card_background());
 
         this.new_board = false;
 
-      } else {
+    } else {
+
+      // only need update image source
+      // because handler only needs to be attached once
+      $('.holder').each(function(index) {
+
+          $(this).find('img').attr('src',photos[index])
+
+      });
 
 
-        $('.holder').each(function(index){
-
-            $(this).find('img').attr('src',photos[index]).end()
-                   .off("click")
-                   .click(function(){ 
-
-                game.card_handler(this,photos[index],index); 
-
-            });
-
-        })
-
-
-      }//end else
-
-      switch(this.mode) {
-          case "single-player" :
-            this.initialize_single_player();
-            break;
-          case "two-player" :
-            this.initialize_two_player();
-            break;
-          default :
-            throw("Invalid game mode selected");
-      }
+    }
 
      //after all handlers are prepared
      //wait for all images to load before game play
-     $('img').load(function(){
-                 $('#loader').hide();
-     })
+
+    var self = this;
+
+    $('img').load(function() {
+
+
+      if(self.settings.is_single_player()) {
+
+            self.initialize_single_player();
+
+      } else if (self.settings.is_two_player()) {
+
+            self.initialize_two_player();
+
+      } else {
+            throw("Invalid game mode selected");
+      }
+
+      $('#loader').hide();
+
+    self.started = true;
+
+   });
 
 
   }
 
-  , card_handler : function(card,src,index) {
+  , attach_card_handler : function() {
+
+    var game = this
+      , $board = this.get_board();
+
+    //event delegation
+    $board.on('click','.holder',function() {
+
+      var $card = $(this)
+        , idx = $card.data('index')
+        , photos = game.getImages()
+        , photo = photos[idx];
+
+      if(game.started && !($card.hasClass('flip') || $card.hasClass('done'))  && game.get_flip_count() < 2 ) {
+
+          $card.toggleClass('flip');
+          game.increment_flip_count();
+          
+          if(game.get_flip_count() === 1) {
+            game.set_card_one(photo);
+          }
+        
+          if(game.get_flip_count() === 2) {
+
+            game.set_card_two(photo);
+
+             //if card 1 matches card 2 don't flip back, just display cards
+            if(game.cardsEqual()) {
+
+              $('.flip').addClass('done')
+                        .removeClass('flip');
+
+              //resets count but does not flip back cards
+              game.reset_flip_count(); 
+
+              game.increment_pair_count();
+
+              if(game.settings.is_two_player()) {
+                if(game.is_turn_one()) {
+                  game.increment_score_one();
+                } else {
+                  game.increment_score_two();
+                }
+              }
+
+              if(game.gameOver()) {
+
+                game.display_results();
+                game.started = false;
+
+              }//end if game over
 
 
-                $card = $(card);
+            } else {
 
-                if( !$card.hasClass('flip') && this.get_flip_count() < 2 ) {
+            //otherwise flip back currently selected cards
+            game.reset_flips();
 
-                    $card.toggleClass('flip');
-                    this.increment_flip_count();
-                    
-                    if(this.get_flip_count() === 1) {
-                       this.set_card_one(src);
-                    }
-                  
+            if(game.settings.is_two_player()) {
+              game.change_turns();
+            }
 
-                    if(this.get_flip_count() === 2) {
+           }
 
-                      this.set_card_two(src);
+         }//end two flip count
 
-                       //if card 1 matches card 2 don't flip back, just display cards
-                      if(this.cardsEqual()) {
+       }//end if game started
 
-                        $('.flip').addClass('done')
-                                  .removeClass('flip')
-                                  .off("click");
-
-                        this.reset_flip_count(); //resets count but does not flip back cards
-
-                        this.increment_pair_count();
-
-                        if(this.get_mode() === "two-player") {
-                          if(this.is_turn_one()) {
-                            this.increment_score_one();
-                          } else {
-                            this.increment_score_two();
-                          }
-                        }
-
-                        if(this.gameOver()) {
-
-                         if(this.get_mode() === "two-player") {
-
-                           var result_info =
-                            '<div class="info">'
-                            + '<hr/>';
-
-                            if(this.is_tie()) {
-                              result_info += '<i class="icon-user orange"></i>' 
-                                          +  '<i class="icon-user orange_red"></i>' 
-                                          +  'Tie Game';
-                            } else if(this.player_one_wins()) {
-                              result_info +=  '<i class="icon-user orange">Wins</i>' ;
-                            } else {
-                              result_info += '<i class="icon-user orange_red">Wins</i>' 
-                            }
-
-                            $('#overlay').text("").append(
-                            result_info
-                            +  '<hr/>'
-                            +  '<i class="icon-play-circle2" title="Play Again"></i>'
-                            +  '<i class="icon-cancel close" title="Close"></i></div>'
-                            + '</div>'
-                            ).fadeIn();
-
-                         } else {
-                           $('#overlay').text("").append(
-                             '<div class="info">'
-                            +  '<hr/>'
-                            +    '<i class="icon-trophy"></i>'
-                            +  '<hr/>'
-                            +    'Puzzle Solved!' 
-                            +    ' Time: '
-                            +    '<span class="time">'+ $('#clock').text() +'</span>'
-                            +  '<hr/>'
-                            +  '<i class="icon-play-circle2" title="Play Again"></i>'
-                            +  '<i class="icon-cancel close" title="Close"></i>'
-
-                             ).fadeIn();
-                         }
-
-                        }
-
-
-                      } else {
-
-                      //otherwise flip back currently selected cards
-                      this.reset_flips();
-
-                      if(this.get_mode() === "two-player" ) {
-                        this.change_turns();
-                      }
-
-                     }
-
-                     
-
-                   }//end two flip count
-
-
-                 }//end if
+      });// end event delegation
    }
    /*==== SINGLE PLAYER ====*/
-   , start_time : ""
-   , initialize_single_player: function(){
+   , initialize_single_player: function() {
      $('#scoreboard').text("").append(
          "<div id='clock'>"
        + "<span id='min'>00</span><em>:</em><span id='sec'>00</span><em>:</em><span id='centisec'>00</span>"
@@ -297,41 +294,39 @@
 
      this.start_watch();
    }
-   , start_watch : function(){
+   , start_watch : function() {
      this.start_time = (new Date()).getTime();
      this.count();
    }
    , count: function() {
-    //base = 10ms
+     //base = 10ms
 
-    (function(self){
+     (function(self) {
 
-      if(self.gameOver()) {
-        return;
-      } else {
+       if(self.gameOver()) {
+         return;
+       } else {
 
-      var diff_time = (new Date()).getTime() - self.start_time
+       var diff_time = (new Date()).getTime() - self.start_time
         , min = Math.floor(diff_time / 60000) //60 sec * 1000 ms/sec
         , sec = Math.floor((diff_time % 60000)/1000) //ms remaining / 1000 ms/sec
         , centisec = Math.floor((diff_time % 1000)/10); //remaining ms converted to centisec ; 1 centisec = 10 ms
 
 
       $('#sec').text(sec.toString().replace(/^(\d)$/,"0$1"));
-      $('#min').text( min.toString().replace(/^(\d)$/,"0$1"));
+      $('#min').text(min.toString().replace(/^(\d)$/,"0$1"));
       $('#centisec').text(centisec.toString().replace(/^(\d)$/,"0$1"));
 
             setTimeout(function(){self.count()},10); //10
       }
 
-    }
-    )(this)
+    })(this);
 
-  }
+   }
    /*==== END SINGLE PLAYER ====*/
 
 
    /*==== TWO PLAYER ====*/
-   , turn_one : true
    , is_turn_one : function() {
      return this.turn_one;
    }
@@ -343,7 +338,7 @@
    }
    , initialize_two_player : function() {
 
-      $('#scoreboard').text("").append(
+      $('#scoreboard').html("").append(
            "<i id='player_one' class='icon-user' ></i>"
          + "<span id='score_one' class='score' >0</span>"
 
@@ -351,41 +346,35 @@
          + "<span id='score_two' class='score'>0</span>"
        );
 
+       this.turn_one = true;
+       this.reset_pair_count();
+       this.reset_scores();
 
-       var self = this;
-       self.turn_one = true;
-       self.reset_flip_count();
-       self.reset_scores();
-       setTimeout(function(){
+       setTimeout(function() {
          $('#player_one').animate({opacity : 1});
          $('#player_two').animate({opacity : 0.3});
-       },self.wait_time);
+       },this.wait_time);
    }
    , change_turns : function() {
 
-     var self = this;
      this.turn_one = !this.turn_one;
 
-     if(this.is_turn_one()) {
+     setTimeout((function(game) {
 
-       setTimeout(function(){
+       if(game.is_turn_one()) {
          $('#player_one').animate({opacity : 1});
          $('#player_two').animate({opacity : 0.3});
-       },self.wait_time);
 
-     } else {
+       } else {
 
-       setTimeout(function(){
          $('#player_one').animate({opacity : 0.3});
          $('#player_two').animate({opacity : 1});
-       },self.wait_time);
 
-     }
+       }
+     })(this),this.wait_time);
 
    }
 
-   , player_one_score : 0
-   , player_two_score : 0
    , increment_score_one : function() {
      this.player_one_score++;
      this.update_score_one();
@@ -412,15 +401,56 @@
    }
 
    /*==== END TWO PLAYER ====*/
+   , display_results: function() {
 
+      if(this.settings.is_two_player()) {
+
+         var result_info =
+          '<div class="info">'
+          + '<hr/>';
+
+          if(this.is_tie()) {
+            result_info += '<i class="icon-user orange"></i>' 
+                        +  '<i class="icon-user orange_red"></i>' 
+                        +  'Tie Game';
+          } else if(this.player_one_wins()) {
+            result_info +=  '<i class="icon-user orange">Wins</i>' ;
+          } else {
+            result_info += '<i class="icon-user orange_red">Wins</i>' 
+          }
+
+          $('#overlay').html("").append(
+          result_info
+          +  '<hr/>'
+          +  '<i class="icon-play-circle2" title="Play Again"></i>'
+          +  '<i class="icon-cancel close" title="Close"></i></div>'
+          + '</div>'
+          ).fadeIn();
+
+       } else {
+         $('#overlay').html("").append(
+           '<div class="info">'
+          +  '<hr/>'
+          +    '<i class="icon-trophy"></i>'
+          +  '<hr/>'
+          +    'Puzzle Solved!' 
+          +    ' Time: '
+          +    '<span class="time">'+ $('#clock').text() +'</span>'
+          +  '<hr/>'
+          +  '<i class="icon-play-circle2" title="Play Again"></i>'
+          +  '<i class="icon-cancel close" title="Close"></i>'
+
+           ).fadeIn();
+      }
+   }
    , restart : function (img_arr) {
 
-        $('holder').off("click");
+        this.started = false;
+
         $('.done').removeClass('done');
         $('.flip').removeClass('flip');
 
         var self = this;
-        self.reset_pair_count();
         setTimeout(function() {
             self.setImages(img_arr);
             self.generateBoard();
@@ -431,14 +461,16 @@
  }//end Meditation
 
 
-function shuffle(arr) {
 /*
- Fisher-Yates_shuffle
- To shuffle an array a of n elements (indices 0..n-1):
-  for i from n − 1 downto 1 do
-       j ← random integer with 0 ≤ j ≤ i
-       exchange a[j] and a[i]
- */	
+ * shuffle
+ *
+ * uses Fisher-Yates_shuffle
+ * To shuffle an array a of n elements (indices 0..n-1):
+ * for i from n − 1 downto 1 do
+ *      j ← random integer with 0 ≤ j ≤ i
+ *      exchange a[j] and a[i]
+ */  
+function shuffle(arr) {
 
   var j , temp;
   for(var i = arr.length - 1; i > 0; i-- ) {
