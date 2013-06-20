@@ -6,6 +6,8 @@
  * Play Meditation by matching pictures!
  */
 
+(function(window, undefined) {
+
   function Meditation(board_id, mode, images) {
 
     this.$board = $('#' + board_id);
@@ -16,33 +18,33 @@
        $('#mode-2').attr("checked",true);
     }
 
-    //settings specific to this instance
+    // settings specific to this instance
     this.settings =  (function() {
 
-      //default background
+      // default background
       var card_background = "carbon_fibre";
 
       return {
 
-        //mode
-          set_single_player : function() {
+        // mode
+          set_single_player: function() {
           mode = "single-player";
         }
-        , is_single_player : function() {
+        , is_single_player: function() {
           return mode ===  "single-player";
         }
-        , set_two_player : function() {
+        , set_two_player: function() {
           mode = "two-player";
         }
-        , is_two_player : function() {
+        , is_two_player: function() {
           return mode === "two-player";
         }
        
-        //board background
-        , get_card_background : function() {
+        // board background
+        , get_card_background: function() {
           return card_background;
         }
-        , set_card_background : function(bg) {
+        , set_card_background: function(bg) {
           $('.front').removeClass(this.get_card_background()).addClass(bg);
           card_background = bg;
         } 
@@ -59,31 +61,42 @@
 
   }
 
+  /**
+   * doubles the elements in the array such that
+   * [1,2,3].duplicate() => [1,2,3,1,2,3]
+   */
+  Array.prototype.duplicate = function() {
+
+    return this.concat(this);
+
+  };
+
   Meditation.prototype = {
 
-    min_count : 14 //pairs
-  , wait_time : 1000 //ms
-  , set_card_one : function(val) {
+    constructor: Meditation
+  , MIN_COUNT: 14 // pairs
+  , WAIT_TIME: 1000 // ms
+  , set_card_one: function(val) {
     this.card_one = val;
   }
-  , set_card_two : function(val) {
+  , set_card_two: function(val) {
     this.card_two = val;
   }
-  , cardsEqual : function() {
+  , cardsEqual: function() {
      return this.card_one === this.card_two;
   }
   // flip count indicates if we have have flipped two cards
   // and is used to trigger card checking
-  , get_flip_count : function() { //[0-2]
+  , get_flip_count: function() { // [0-2]
     return this.flip_count;
   }
-  , increment_flip_count : function() {
+  , increment_flip_count: function() {
     this.flip_count++;
   }
-  , reset_flip_count : function() {
+  , reset_flip_count: function() {
     this.flip_count = 0;
   }
-  , reset_flips : function() {
+  , reset_flips: function() {
 
      setTimeout((function(game) {
 
@@ -93,18 +106,18 @@
            game.reset_flip_count();
         };
 
-     })(this),this.wait_time);
+     })(this),this.WAIT_TIME);
 
   }
-  //pair_count indicates number of correct pairs
-  , increment_pair_count : function() {
+  // pair_count indicates number of correct pairs
+  , increment_pair_count: function() {
     this.pair_count++;
   }
-  , reset_pair_count : function() {
+  , reset_pair_count: function() {
     this.pair_count = 0;
   } 
-  , gameOver : function() {
-    return this.pair_count == this.min_count;
+  , gameOver: function() {
+    return this.pair_count == this.MIN_COUNT;
   }
    /* 
     * setImages
@@ -112,26 +125,24 @@
     * @param arr - array of images
     * Because meditation is implemented here on a 7 * 4 board, 14 images should be provided
     */
-  , setImages : function(arr) {
+  , setImages: function(arr) {
 
 
-    if(arr.length >= this.min_count) {
+    if(arr.length >= this.MIN_COUNT) {
 
-      arr = shuffle(arr).slice(0, this.min_count);
+      arr = shuffle(arr).slice(0, this.MIN_COUNT);
 
-      arr.forEach(function(url){
-        arr.push(url);
-      })
+      arr = arr.duplicate();
 
       this.image_list = shuffle(arr);
 
     } else {
-      throw("There must be a minimum of " + this.min_count + " images provided.");
+      throw("There must be a minimum of " + this.MIN_COUNT + " images provided.");
     }
  	
   }
 
-  , getImages : function() {
+  , getImages: function() {
     return this.image_list;
   }
 
@@ -139,7 +150,7 @@
     return this.$board;
   }
 
-  , generateBoard : function() {
+  , generateBoard: function() {
 
     var $board = this.get_board()
       , photos = this.getImages();
@@ -157,13 +168,13 @@
                    $('<div/>').addClass('holder').append(
                       $('<div/>').addClass('card').append(
                           $('<div/>').addClass('front face')
-                        , $('<img/>').attr({'src' : photos[i]}).addClass('back face')
+                        , $('<img/>').attr({'src': photos[i]}).addClass('back face')
                       )
                     )
                    .data('index', i)
               );
 
-        }//end for loop
+        } // end for loop
 
         $board.append($fragment);
 
@@ -185,8 +196,8 @@
 
     }
 
-     //after all handlers are prepared
-     //wait for all images to load before game play
+     // after all handlers are prepared
+     // wait for all images to load before game play
 
     var self = this;
 
@@ -214,12 +225,12 @@
 
   }
 
-  , attach_card_handler : function() {
+  , attach_card_handler: function() {
 
     var game = this
       , $board = this.get_board();
 
-    //event delegation
+    // event delegation
     $board.on('click','.holder',function() {
 
       var $card = $(this)
@@ -240,13 +251,13 @@
 
             game.set_card_two(photo);
 
-             //if card 1 matches card 2 don't flip back, just display cards
+             // if card 1 matches card 2 don't flip back, just display cards
             if(game.cardsEqual()) {
 
               $('.flip').addClass('done')
                         .removeClass('flip');
 
-              //resets count but does not flip back cards
+              // resets count but does not flip back cards
               game.reset_flip_count(); 
 
               game.increment_pair_count();
@@ -264,12 +275,12 @@
                 game.display_results();
                 game.started = false;
 
-              }//end if game over
+              } // end if game over
 
 
             } else {
 
-            //otherwise flip back currently selected cards
+            // otherwise flip back currently selected cards
             game.reset_flips();
 
             if(game.settings.is_two_player()) {
@@ -278,11 +289,11 @@
 
            }
 
-         }//end two flip count
+         } // end two flip count
 
-       }//end if game started
+       } // end if game started
 
-      });// end event delegation
+      }); // end event delegation
    }
    /*==== SINGLE PLAYER ====*/
    , initialize_single_player: function() {
@@ -294,12 +305,12 @@
 
      this.start_watch();
    }
-   , start_watch : function() {
+   , start_watch: function() {
      this.start_time = (new Date()).getTime();
      this.count();
    }
    , count: function() {
-     //base = 10ms
+     // base = 10ms
 
      (function(self) {
 
@@ -308,16 +319,16 @@
        } else {
 
        var diff_time = (new Date()).getTime() - self.start_time
-        , min = Math.floor(diff_time / 60000) //60 sec * 1000 ms/sec
-        , sec = Math.floor((diff_time % 60000)/1000) //ms remaining / 1000 ms/sec
-        , centisec = Math.floor((diff_time % 1000)/10); //remaining ms converted to centisec ; 1 centisec = 10 ms
+        , min = Math.floor(diff_time / 60000) // 60 sec * 1000 ms/sec
+        , sec = Math.floor((diff_time % 60000)/1000) // ms remaining / 1000 ms/sec
+        , centisec = Math.floor((diff_time % 1000)/10); // remaining ms converted to centisec ; 1 centisec = 10 ms
 
 
       $('#sec').text(sec.toString().replace(/^(\d)$/,"0$1"));
       $('#min').text(min.toString().replace(/^(\d)$/,"0$1"));
       $('#centisec').text(centisec.toString().replace(/^(\d)$/,"0$1"));
 
-            setTimeout(function(){self.count()},10); //10
+            setTimeout(function(){self.count()},10); // 10
       }
 
     })(this);
@@ -327,16 +338,16 @@
 
 
    /*==== TWO PLAYER ====*/
-   , is_turn_one : function() {
+   , is_turn_one: function() {
      return this.turn_one;
    }
-   , player_one_wins : function() {
+   , player_one_wins: function() {
      return this.player_one_score > this.player_two_score;
    }
-   , is_tie : function() {
+   , is_tie: function() {
      return this.player_one_score === this.player_two_score;
    }
-   , initialize_two_player : function() {
+   , initialize_two_player: function() {
 
       $('#scoreboard').html("").append(
            "<i id='player_one' class='icon-user' ></i>"
@@ -351,49 +362,49 @@
        this.reset_scores();
 
        setTimeout(function() {
-         $('#player_one').animate({opacity : 1});
-         $('#player_two').animate({opacity : 0.3});
-       },this.wait_time);
+         $('#player_one').animate({opacity: 1});
+         $('#player_two').animate({opacity: 0.3});
+       },this.WAIT_TIME);
    }
-   , change_turns : function() {
+   , change_turns: function() {
 
      this.turn_one = !this.turn_one;
 
      setTimeout((function(game) {
 
        if(game.is_turn_one()) {
-         $('#player_one').animate({opacity : 1});
-         $('#player_two').animate({opacity : 0.3});
+         $('#player_one').animate({opacity: 1});
+         $('#player_two').animate({opacity: 0.3});
 
        } else {
 
-         $('#player_one').animate({opacity : 0.3});
-         $('#player_two').animate({opacity : 1});
+         $('#player_one').animate({opacity: 0.3});
+         $('#player_two').animate({opacity: 1});
 
        }
-     })(this),this.wait_time);
+     })(this),this.WAIT_TIME);
 
    }
 
-   , increment_score_one : function() {
+   , increment_score_one: function() {
      this.player_one_score++;
      this.update_score_one();
    }
-   , increment_score_two : function() {
+   , increment_score_two: function() {
      this.player_two_score++;
      this.update_score_two();
    }
-   , update_score_one : function() {
+   , update_score_one: function() {
 
      $('#score_one').text(this.player_one_score);
      
    }
-   , update_score_two : function() {
+   , update_score_two: function() {
 
      $('#score_two').text(this.player_two_score);
 
    }
-   , reset_scores : function() {
+   , reset_scores: function() {
      this.player_one_score = 0;
      this.player_two_score = 0;
      this.update_score_one();
@@ -443,7 +454,7 @@
            ).fadeIn();
       }
    }
-   , restart : function (img_arr) {
+   , restart: function (img_arr) {
 
         this.started = false;
 
@@ -454,14 +465,14 @@
         setTimeout(function() {
             self.setImages(img_arr);
             self.generateBoard();
-       },self.wait_time * 2);
+       },self.WAIT_TIME * 2);
    }
 
  
- }//end Meditation
+ } // end Meditation
 
 
-/*
+/**
  * shuffle
  *
  * uses Fisher-Yates_shuffle
@@ -469,6 +480,9 @@
  * for i from n − 1 downto 1 do
  *      j ← random integer with 0 ≤ j ≤ i
  *      exchange a[j] and a[i]
+ *
+ * @param Array
+ * @return Array
  */  
 function shuffle(arr) {
 
@@ -484,3 +498,10 @@ function shuffle(arr) {
 
   return arr;
 }
+
+// Expose Meditation object to the window
+if (typeof window === "object" && typeof window.document === "object") {
+  window.Meditation = Meditation;
+}
+
+})(window);

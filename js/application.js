@@ -6,16 +6,16 @@
  *
  */
 
- var settings = {
-                     instagram_token: '271434636.1a79b15.9cab33e1a24547d3ae9623253881652c' //access_token
-                   , sc_token:  '0832d7b6bacfb836dafac90b0365b3f6' //client_id:
-                   , count : 100
-                   , default_tag : 'Sankeien'
+
+  var settings = {
+                     instagram_token: '271434636.1a79b15.9cab33e1a24547d3ae9623253881652c' // access_token
+                   , sc_token:  '0832d7b6bacfb836dafac90b0365b3f6' // client_id
+                   , count: 200
+                   , default_tag: 'Sankeien'
                 }
 
-    , game
+    , game = null
     , mode;
-
 
  $(document).ready(function() {
 
@@ -27,10 +27,10 @@
 
     document.onclick = function(e) {
 
-      //IE doesn't pass in the event object
+      // IE doesn't pass in the event object
       e = e || window.event;
     
-      //IE uses srcElement as the target
+      // IE uses srcElement as the target
       var target = e.target || e.srcElement;
 
       if(target.id) {
@@ -64,7 +64,7 @@
 
       }
 
-           //hide tabs if still visible
+           // hide tabs if still visible
            $('.active').hide().removeClass('active');
        
      };
@@ -72,10 +72,10 @@
      var $tabs = $('.flyout');
          $tabs.hide();
 
-     //events for navigation icons and respective tabs then open
+     // events for navigation icons and respective tabs then open
      $('nav').on('click','i',function(e) {
 
-        //0 1 2
+        // 0 1 2
         var index = $(this).parent().index()
           , $tab = $($tabs[index]);
 
@@ -93,7 +93,7 @@
      });
 
 
-     //events for tabs
+     // events for tabs
      $('.flyout').click(function(e) {
 
         e = e || window.event;
@@ -116,7 +116,7 @@
 
           switch(target.className) {
 
-          //restart
+          // restart
           case "icon-cw":
             reload();
             break;
@@ -126,13 +126,13 @@
         e.stopPropagation();
      });
 
-     //color picker for cards
+     // color picker for cards
      $('#color_settings').on('click','li',function() {
        game.settings.set_card_background($(this).attr("class"));
      });
 
     
-     //set default setting to single-player
+     // set default setting to single-player
      $('#m1').click();
 
 
@@ -160,14 +160,18 @@
 
               for(var key in photos) {
 
-                  var photo = photos[key];
+                  if(photos.hasOwnProperty(key)) {
 
-                  img_arr.push(photo.images.thumbnail.url);
+                    var photo = photos[key];
+
+                    img_arr.push(photo.images.thumbnail.url);
+
+                  }
 
               }
 
 
-              if(game == undefined) {
+              if(game == null) {
 
                 game = new Meditation('board',mode,img_arr);
 
@@ -197,9 +201,13 @@
 
               for(var key in photos) {
 
-                  var photo = photos[key];
+                  if(photos.hasOwnProperty(key)) {
 
-                  $('<img/>')[0].src = photo.images.thumbnail.url;
+                    var photo = photos[key];
+
+                    $('<img/>')[0].src = photo.images.thumbnail.url;
+
+                }
 
               }
 
@@ -213,9 +221,9 @@
   }
 
   function playSomeMusic() { 
-      //SC.get('/users/2772749/tracks', //olafur arnalds
+      // SC.get('/users/2772749/tracks', // olafur arnalds
 
-      SC.oEmbed("https://soundcloud.com/olafur-arnalds", {maxheight: 395 , auto_play: true, color: "01a2ff"}, //ff0066
+      SC.oEmbed("https://soundcloud.com/olafur-arnalds", {maxheight: 395 , auto_play: true, color: "01a2ff"}, // ff0066
        document.getElementById("music"));
   }
 
