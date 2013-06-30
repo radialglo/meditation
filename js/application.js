@@ -17,137 +17,17 @@
     , game = null
     , mode;
 
- $(document).ready(function() {
-
-    preload();
-    intro();
-    SC.initialize({ client_id: settings.sc_token });
-    playSomeMusic();
-   
-
-    document.onclick = function(e) {
-
-      // IE doesn't pass in the event object
-      e = e || window.event;
-    
-      // IE uses srcElement as the target
-      var target = e.target || e.srcElement;
-
-      if(target.id) {
-
-        switch(target.id) {
-
-          case "m1":
-            mode = "single-player"
-            break;
-          case "m2":
-            mode = "two-player";
-            break;
-          }
-        
-      } else {
-
-        switch(target.className) {
-
-          case "icon-play-circle2":
-            reload();
-            break;
-
-          case "icon-cancel close":
-            
-            $(target).parent().fadeOut(function() {
-              $('#overlay').fadeOut();
-             });
-            break;
-
-        }
-
-      }
-
-           // hide tabs if still visible
-           $('.active').hide().removeClass('active');
-       
-     };
-
-     var $tabs = $('.flyout');
-         $tabs.hide();
-
-     // events for navigation icons and respective tabs then open
-     $('nav').on('click','i',function(e) {
-
-        // 0 1 2
-        var index = $(this).parent().index()
-          , $tab = $($tabs[index]);
-
-        if($tab.is('.active')) {
-          
-          $tab.hide().removeClass('active')
-
-        } else {
-          $('.active').hide().removeClass('active');
-          $tab.addClass('active').show();
-        }
-
-        e.stopPropagation();
-
-     });
-
-
-     // events for tabs
-     $('.flyout').click(function(e) {
-
-        e = e || window.event;
-    
-        var target = e.target || e.srcElement;
-
-        if(target.id) {
-
-          switch(target.id) {
-            case "mode-1":
-              game.settings.set_single_player();
-              break;
-            case "mode-2":
-              game.settings.set_two_player();
-              break;
-
-          }
-
-        } else {
-
-          switch(target.className) {
-
-          // restart
-          case "icon-cw":
-            reload();
-            break;
-          }
-       }
-
-        e.stopPropagation();
-     });
-
-     // color picker for cards
-     $('#color_settings').on('click','li',function() {
-       game.settings.set_card_background($(this).attr("class"));
-     });
-
-    
-     // set default setting to single-player
-     $('#m1').click();
-
-
- });
- 
-  function reload() {
-    $('#overlay').fadeOut(load_images);
-  }
-
   function query(callback) {
+
+    "use strict";
+
     var instagram_url = 'https://api.instagram.com/v1/tags/' + settings.default_tag + '/media/recent?callback=?&count='+ settings.count;
     $.getJSON(instagram_url, { access_token:settings.instagram_token }, callback);
   }
 
   function load_images() {
+
+    "use strict";
 
     $('#loader').show();
 
@@ -183,15 +63,23 @@
 
 
           } else {
-              throw("Error" + instagram.meta.code);
+              throw new Error("Error" + instagram.meta.code);
           }
 
       });
 
+  }
 
- }
+  function reload() {
+
+    "use strict";
+
+    $('#overlay').fadeOut(load_images);
+  }
 
   function preload() {
+
+    "use strict";
      
      query(function(instagram) {
 
@@ -212,7 +100,7 @@
               }
 
           } else {
-              throw("Error" + instagram.meta.code);
+              throw new Error("Error" + instagram.meta.code);
           }
 
       });
@@ -223,11 +111,15 @@
   function playSomeMusic() { 
       // SC.get('/users/2772749/tracks', // olafur arnalds
 
+    "use strict";
+
       SC.oEmbed("https://soundcloud.com/olafur-arnalds", {maxheight: 395 , auto_play: true, color: "01a2ff"}, // ff0066
        document.getElementById("music"));
   }
 
   function intro() {
+
+    "use strict";
 
    $('#overlay').append( 
       '<div id="game-intro">'
@@ -287,4 +179,128 @@
     + '</div>'
      );
   }
+
+ $(document).ready(function() {
+
+    "use strict";
+
+    preload();
+    intro();
+    SC.initialize({ client_id: settings.sc_token });
+    playSomeMusic();
+   
+
+    document.onclick = function(e) {
+
+      // IE doesn't pass in the event object
+      e = e || window.event;
+    
+      // IE uses srcElement as the target
+      var target = e.target || e.srcElement;
+
+      if(target.id) {
+
+        switch(target.id) {
+
+          case "m1":
+            mode = "single-player";
+            break;
+          case "m2":
+            mode = "two-player";
+            break;
+          }
+        
+      } else {
+
+        switch(target.className) {
+
+          case "icon-play-circle2":
+            reload();
+            break;
+
+          case "icon-cancel close":
+            
+            $(target).parent().fadeOut(function() {
+              $('#overlay').fadeOut();
+             });
+            break;
+
+        }
+
+      }
+
+           // hide tabs if still visible
+           $('.active').hide().removeClass('active');
+       
+     };
+
+     var $tabs = $('.flyout');
+         $tabs.hide();
+
+     // events for navigation icons and respective tabs then open
+     $('nav').on('click','i',function(e) {
+
+        // 0 1 2
+        var index = $(this).parent().index()
+          , $tab = $($tabs[index]);
+
+        if($tab.is('.active')) {
+          
+          $tab.hide().removeClass('active');
+
+        } else {
+          $('.active').hide().removeClass('active');
+          $tab.addClass('active').show();
+        }
+
+        e.stopPropagation();
+
+     });
+
+
+     // events for tabs
+     $('.flyout').click(function(e) {
+
+        e = e || window.event;
+    
+        var target = e.target || e.srcElement;
+
+        if(target.id) {
+
+          switch(target.id) {
+            case "mode-1":
+              game.settings.set_single_player();
+              break;
+            case "mode-2":
+              game.settings.set_two_player();
+              break;
+
+          }
+
+        } else {
+
+          switch(target.className) {
+
+          // restart
+          case "icon-cw":
+            reload();
+            break;
+          }
+       }
+
+        e.stopPropagation();
+     });
+
+     // color picker for cards
+     $('#color_settings').on('click','li',function() {
+       game.settings.set_card_background($(this).attr("class"));
+     });
+
+    
+     // set default setting to single-player
+     $('#m1').click();
+
+
+ });
+ 
 

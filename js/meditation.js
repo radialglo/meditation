@@ -8,6 +8,8 @@
 
 (function(window, undefined) {
 
+  "use strict";
+
   function Meditation(board_id, mode, images) {
 
     this.$board = $('#' + board_id);
@@ -61,16 +63,6 @@
 
   }
 
-  /**
-   * doubles the elements in the array such that
-   * [1,2,3].duplicate() => [1,2,3,1,2,3]
-   */
-  Array.prototype.duplicate = function() {
-
-    return this.concat(this);
-
-  };
-
   Meditation.prototype = {
 
     constructor: Meditation
@@ -117,7 +109,7 @@
     this.pair_count = 0;
   } 
   , gameOver: function() {
-    return this.pair_count == this.MIN_COUNT;
+    return this.pair_count === this.MIN_COUNT;
   }
    /* 
     * setImages
@@ -132,14 +124,15 @@
 
       arr = shuffle(arr).slice(0, this.MIN_COUNT);
 
-      arr = arr.duplicate();
+      // duplicate the array
+      arr = arr.concat(arr);
 
       this.image_list = shuffle(arr);
 
     } else {
-      throw("There must be a minimum of " + this.MIN_COUNT + " images provided.");
+      throw new Error("There must be a minimum of " + this.MIN_COUNT + " images provided.");
     }
- 	
+  
   }
 
   , getImages: function() {
@@ -189,7 +182,7 @@
       // because handler only needs to be attached once
       $('.holder').each(function(index) {
 
-          $(this).find('img').attr('src',photos[index])
+          $(this).find('img').attr('src',photos[index]);
 
       });
 
@@ -213,7 +206,7 @@
             self.initialize_two_player();
 
       } else {
-            throw("Invalid game mode selected");
+            throw new Error("Invalid game mode selected");
       }
 
       $('#loader').hide();
@@ -328,7 +321,7 @@
       $('#min').text(min.toString().replace(/^(\d)$/,"0$1"));
       $('#centisec').text(centisec.toString().replace(/^(\d)$/,"0$1"));
 
-            setTimeout(function(){self.count()},10); // 10
+            setTimeout(function(){self.count();},10); // 10
       }
 
     })(this);
@@ -427,7 +420,7 @@
           } else if(this.player_one_wins()) {
             result_info +=  '<i class="icon-user orange">Wins</i>' ;
           } else {
-            result_info += '<i class="icon-user orange_red">Wins</i>' 
+            result_info += '<i class="icon-user orange_red">Wins</i>'; 
           }
 
           $('#overlay').html("").append(
@@ -488,12 +481,12 @@ function shuffle(arr) {
 
   var j , temp;
   for(var i = arr.length - 1; i > 0; i-- ) {
-  	
-  	j = Math.floor( Math.random() * i );
+    
+    j = Math.floor( Math.random() * i );
 
-  	 temp = arr[j];
-  	 arr[j] = arr[i];
-  	 arr[i] = temp;
+     temp = arr[j];
+     arr[j] = arr[i];
+     arr[i] = temp;
   }
 
   return arr;

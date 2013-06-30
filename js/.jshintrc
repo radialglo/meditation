@@ -1,0 +1,20 @@
+{
+  "browser": true,
+  "jquery": true,
+  "strict": true,
+  "newcap": true,
+  "undef": true,
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "sub": true,
+  "undef": true,
+  "boss": true,
+  "eqnull": true,
+  "laxcomma": true,
+  "laxbreak": true,
+  "globals": {"SC": false, "Meditation": false}
+}
