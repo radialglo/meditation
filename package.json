@@ -1,0 +1,17 @@
+{
+  "name": "Meditation",
+  "version": "0.1.0",
+  "author": "radialglo",
+  "private": true,
+  "devDependencies": {
+    "grunt": "~0.4.1",
+    "grunt-contrib-watch": "*",
+    "grunt-contrib-jshint": "~0.6.3",
+    "grunt-contrib-uglify": "*",
+    "grunt-contrib-cssmin": "*",
+    "grunt-contrib-sass": "*",
+    "grunt-cssc": "*",
+    "grunt-htmlhint": "*",
+    "load-grunt-tasks": "~0.2.0"
+  }
+}
