@@ -5,8 +5,8 @@
 
 module.exports = function (grunt) {
 
-   "use strict";
-   require('load-grunt-tasks')(grunt);
+    "use strict";
+    require('load-grunt-tasks')(grunt);
 
     grunt.initConfig({
 
@@ -20,10 +20,10 @@ module.exports = function (grunt) {
                     consolidateMediaQueries: true
                 },
                 files: [{
-                  expand: true,
-                  cwd: 'css/',
-                  src: ['*.css'],
-                  dest: 'css/',
+                    expand: true,
+                    cwd: 'css/',
+                    src: ['*.css'],
+                    dest: 'css/',
                 }]
             }
         },
@@ -31,11 +31,11 @@ module.exports = function (grunt) {
         cssmin: {
             build: {
                 files: [{
-                  expand: true,
-                  cwd: 'css/',
-                  src: ['*.css'],
-                  dest: 'css/',
-                  ext: '.min.css'
+                    expand: true,
+                    cwd: 'css/',
+                    src: ['*.css'],
+                    dest: 'css/',
+                    ext: '.min.css'
                 }]
             }
         },
@@ -43,16 +43,15 @@ module.exports = function (grunt) {
         sass: {
             build: {
                 options: {
-                  style: 'expanded'
+                    style: 'expanded'
                 },
                 files: [{
-                  expand: true,
-                  cwd: 'scss/',
-                  src: ['*.scss'],
-                  dest: 'css/',
-                  ext: '.css',
+                    expand: true,
+                    cwd: 'scss/',
+                    src: ['*.scss'],
+                    dest: 'css/',
+                    ext: '.css',
                 }]
-                
             }
         },
 
@@ -71,24 +70,36 @@ module.exports = function (grunt) {
             }
         },
         jshint: {
-          options: {
-            "browser": true,
-            "jquery": true,
-            "strict": true,
-            "newcap": true,
-            "undef": true,
-            "curly": true,
-            "eqeqeq": true,
-            "immed": true,
-            "latedef": true,
-            "noarg": true,
-            "sub": true,
-            "boss": true,
-            "eqnull": true,
-            "laxcomma": true,
-            "laxbreak": true,
-            "globals": {"SC": false, "Meditation": false}
-          }
+            options: {
+                "browser": true,
+                "jquery": true,
+                "strict": true,
+                "newcap": true,
+                "undef": true,
+                "curly": true,
+                "eqeqeq": true,
+                "immed": true,
+                "latedef": true,
+                "noarg": true,
+                "sub": true,
+                "boss": true,
+                "eqnull": true,
+                "laxcomma": true,
+                "laxbreak": true,
+                "indent": 4,
+                "globals": {
+                    "SC": false,
+                    "Meditation": false,
+                    // Node Constants
+                    "module": false,
+                    "require": false
+                }
+            },
+            all: {
+                src: [
+                    "Gruntfile.js","js/application.js", "js/meditation.js"
+                ]
+            }
         },
 
         htmlhint: {
@@ -123,21 +134,21 @@ module.exports = function (grunt) {
             },
             build: {
                 files: [{
-                  expand: true,
-                  cwd: 'js/',
-                  src: ['*.js', '!*min.js'], // don't minify min files
-                  dest: 'js/',
-                  ext: '.min.js'
+                    expand: true,
+                    cwd: 'js/',
+                    src: ['*.js', '!*min.js'], // don't minify min files
+                    dest: 'js/',
+                    ext: '.min.js'
                 }]
             }
         }
 
     });
 
-    grunt.registerTask('default',  ['js']);
+    grunt.registerTask('default',  ['jshint']);
     grunt.registerTask('all',  ['js', 'css', 'html']);
     grunt.registerTask('css',  ['sass', 'cssc', 'cssmin']);
     grunt.registerTask('html', ['htmlhint']);
-    grunt.registerTask('js', ['jshint']);
+    grunt.registerTask('js', ['jshint', 'uglify']);
     grunt.registerTask('jsmin', ['uglify']);
 };

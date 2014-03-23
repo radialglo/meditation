@@ -6,7 +6,7 @@ body{height:550px;min-height:100%;min-width:815px;position:relative;background:u
 .group:after{content:".";display:block;height:0;clear:both;visibility:hidden;}
 header{background:rgba(255,255,255,0.3);margin:0 auto .5em auto;padding:0 .1em;border-bottom:1px solid #aaa;min-width:900px;}
 .block,#masthead{text-align:center;}
-h1{font:35px/68px "WalkwayBoldRegular" , Arial, sans-serif;letter-spacing:6px;text-align:center;text-shadow:-1px 1px 2px #222;float:left;margin:0 8px;text-transform:uppercase;}
+h1{font:35px/68px 'WalkwayBoldRegular' , Arial, sans-serif;letter-spacing:6px;text-align:center;text-shadow:-1px 1px 2px #222;float:left;margin:0 8px;text-transform:uppercase;}
 nav{float:right;}
 nav li{display:inline-block;line-height:68px;padding:0 1em;float:left;opacity:0.7;-webkit-transition:all 300ms ease-in-out;-moz-transition:all 300ms ease-in-out;-o-transition:all 300ms ease-in-out;transition:all 300ms ease-in-out;}
 nav li:hover{opacity:1;}
@@ -15,7 +15,7 @@ i{cursor:pointer;}
 #board-wrap{position:absolute;padding-top:68px;left:0;right:0;height:100%;top:0;box-sizing:border-box;}
 #board{display:inline-block;vertical-align:middle;}
 #masthead{z-index:2;}
-.flyout{background:whiteSmoke;width:300px;box-shadow:0 0 20px #aaa;width:300px;position:absolute;right:111px;top:51px;text-align:left;font:12px/1.4 "Lucida Grande" , "Lucida Sans Unicode" , "Lucida Sans" , Garuda, Verdana, Tahoma, sans-serif;}
+.flyout{background:whiteSmoke;width:300px;box-shadow:0 0 20px #aaa;width:300px;position:absolute;right:111px;top:51px;text-align:left;font:12px/1.4 "Lucida Grande" ,"Lucida Sans Unicode","Lucida Sans",Garuda,Verdana,Tahoma,sans-serif;}
 .flyout dt{margin:1em auto .25em auto;font-style:italic;}
 .flyout dd{margin-left:1em;}
 .flyout dd:before{content:"-  ";}
@@ -45,7 +45,7 @@ i.icon-user{text-shadow:0 0 2px black;line-height:68px;cursor:default;}
 .score{display:inline-block;width:15px;margin-right:25px;}
 #player_one,#score_one,.orange{color:orange;}
 #player_two,#score_two,.orange_red{color:orangered;}
-#clock{color:#0cf;display:inline-block;text-shadow:0 0 1px white;border-radius:2px;font:12px/68px "Lucida Grande" , "Lucida Sans Unicode" , "Lucida Sans" , Garuda, Verdana, Tahoma, sans-serif;}
+#clock{color:#0cf;display:inline-block;text-shadow:0 0 1px white;border-radius:2px;font:12px/68px "Lucida Grande" ,"Lucida Sans Unicode","Lucida Sans",Garuda,Verdana,Tahoma,sans-serif;}
 .time{color:#0cf;text-shadow:0 0 1px white;}
 #clock span,#clock em{background:rgba(0,0,0,0.9);padding:.2em .4em;-webkit-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);-moz-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);-ms-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);-o-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);}
 #clock em{background:black;padding:.2em .4em;font-style:normal;}
@@ -54,7 +54,7 @@ i.icon-user{text-shadow:0 0 2px black;line-height:68px;cursor:default;}
 .icon-trophy{cursor:pointer;color:gold;text-shadow:0 0 27px white;font-size:30px;}
 .icon-play-circle2,.icon-cancel{font-size:14px;}
 #overlay{position:fixed;top:0;right:0;left:0;bottom:0;background:rgba(0,0,0,0.4);z-index:9999;}
-.info,#game-intro{font:12px/1.4 "Lucida Grande" , "Lucida Sans Unicode" , "Lucida Sans" , Garuda, Verdana, Tahoma, sans-serif;position:fixed;background:rgba(0,0,0,0.7);top:25%;width:100px;left:48%;padding:.5em 2em;text-align:center;color:white;border-radius:4px;-webkit-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);-moz-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);-ms-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);-o-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);}
+.info,#game-intro{font:12px/1.4 "Lucida Grande" ,"Lucida Sans Unicode","Lucida Sans",Garuda,Verdana,Tahoma,sans-serif;position:fixed;background:rgba(0,0,0,0.7);top:25%;width:100px;left:48%;padding:.5em 2em;text-align:center;color:white;border-radius:4px;-webkit-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);-moz-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);-ms-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);-o-box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);box-shadow:0 3px 6px rgba(0,0,0,0.25),0 3px 3px -3px rgba(0,0,0,0.45);}
 #game-intro{box-sizing:border-box;padding:10px 20px;left:50%;top:50%;width:550px;font-size:14px;text-align:left;text-indent:10px;margin-left:-275px;margin-top:-247px;}
 .flyout a,#game-intro a{color:#01a2ff;text-decoration:none;}
 .flyout a:hover,#game-intro a:hover{text-decoration:underline;}
@@ -70,7 +70,7 @@ i.icon-user{text-shadow:0 0 2px black;line-height:68px;cursor:default;}
 .info .icon-user{font-size:30px;}
 #loader{position:fixed;top:50%;right:50%;height:50px;width:50px;display:inline-block;z-index:10000;background:rgba(0,0,0,0.8);text-align:center;line-height:50px;border-radius:4px;box-shadow:0 1px 10px black;text-shadow:0 0 10px white;display:none;}
 #loader i{color:#fc3;}
-.animate-spin{-webkit-animation:spin .5s infinite linear;-moz-animation:spin .5s infinite linear;-o-animation:spin .5s infinite linear;animation:spin .5s infinite linear;}
+.animate-spin{-webkit-animation:spin 0.5s infinite linear;-moz-animation:spin .5s infinite linear;-o-animation:spin .5s infinite linear;animation:spin .5s infinite linear;}
 footer{min-width:815px;clear:both;position:absolute;bottom:0;width:100%;border-top:1px solid #ccc;}
 footer span{background:#0cf;float:left;height:10px;display:block;width:10%;box-shadow:0 0 3px rgba(0,0,0,0.7) inset;}
 .f2{background:lime;}
