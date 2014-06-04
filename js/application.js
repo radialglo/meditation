@@ -11,7 +11,7 @@
 
     "use strict";
     var settings = {
-        instagram_token: '271434636.1a79b15.9cab33e1a24547d3ae9623253881652c' // access_token
+        instagram_token: '271434636.1a79b15.b2d6adbbcebe4434978f5c2195ea0df0' // access_token
       , sc_token:  '0832d7b6bacfb836dafac90b0365b3f6' // client_id
       , count: 200
       , default_tag: 'Sankeien'
